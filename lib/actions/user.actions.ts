@@ -60,21 +60,6 @@ export async function deleteUser(clerkId: string) {
       throw new Error("User not found");
     }
 
-    // // Unlink relationships
-    // await Promise.all([
-    //   // Update the 'events' collection to remove references to the user
-    //   EventModel.updateMany(
-    //     { _id: { $in: userToDelete.events } },
-    //     { $pull: { organizer: userToDelete._id } }
-    //   ),
-
-    //   // Update the 'orders' collection to remove references to the user
-    //   OrderModel.updateMany(
-    //     { _id: { $in: userToDelete.orders } },
-    //     { $unset: { buyer: 1 } }
-    //   ),
-    // ]);
-
     // Delete user
     const deletedUser = await UserModel.findByIdAndDelete(userToDelete._id);
     revalidatePath("/");
