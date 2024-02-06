@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export interface ICategory extends mongoose.Document {
   _id: string;
@@ -10,6 +10,6 @@ const categorySchema = new mongoose.Schema({
 });
 
 const CategoryModel =
-  mongoose.models.Category || mongoose.model("Category", categorySchema);
+  mongoose.models?.Category || mongoose.model('Category', categorySchema);
 
 export default CategoryModel;

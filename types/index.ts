@@ -34,7 +34,7 @@ export type CreateEventParams = {
 };
 
 export type UpdateEventParams = {
-  userId: string;
+  userId: any;
   event: {
     _id: string;
     title: string;
@@ -107,7 +107,7 @@ export type CreateCategoryParams = {
 export type CheckoutOrderParams = {
   eventTitle: string;
   eventId: string;
-  price: string;
+  price?: string;
   isFree: boolean;
   buyerId: string;
 };
@@ -146,4 +146,11 @@ export type RemoveUrlQueryParams = {
 export type SearchParamProps = {
   params: { id: string };
   searchParams: { [key: string]: string | string[] | undefined };
+};
+
+// eventFrom props
+
+export type EventFormProps = {
+  userId: string;
+  type: "Create" | "Update";
 };
