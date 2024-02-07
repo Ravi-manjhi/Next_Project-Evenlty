@@ -10,7 +10,7 @@ export interface IOrder extends mongoose.Document {
 
 const orderSchema = new mongoose.Schema({
   CreateAt: { type: Date, default: Date.now },
-  stripedId: { type: String, required: true, unique: true },
+  stripeId: { type: String, required: true, unique: true },
   totalAmount: { type: String },
   event: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
   buyer: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
