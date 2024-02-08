@@ -14,6 +14,7 @@ import {
   UpdateEventParams,
 } from "@/types";
 import { revalidatePath } from "next/cache";
+import { nullable } from "zod";
 
 const getCategoryByName = async (name: string) => {
   return CategoryModel.findOne({ name: { $regex: name, $options: "i" } });
@@ -31,28 +32,46 @@ const populateEvent = (query: any) => {
 
 // ==============================
 
-export const getAllEvents = async ({
+// GET ALL EVENTS
+export async function getAllEvents({
   query,
   limit = 6,
   page,
   category,
-}: GetAllEventsParams) => {
+}: GetAllEventsParams) {
   try {
     await connectToDatabase();
 
-    const query = EventModel.find().sort({ createdAt: 1 }).skip(0).limit(limit);
+    const titleCondition = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const categoryCondition = category
+      ? await getCategoryByName(category)
+      : null;
+    const conditions = {
+      $and: [
+        titleCondition,
+        categoryCondition ? { category: categoryCondition._id } : {},
+      ],
+    };
 
-    const events = await populateEvent(query);
-    const eventCounts = await EventModel.countDocuments();
+    const skipAmount = (Number(page) - 1) * limit;
+    const eventsQuery = EventModel.find(conditions)
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit);
+
+    const events = await populateEvent(eventsQuery);
+    const eventsCount = await EventModel.countDocuments(conditions);
 
     return {
       data: JSON.parse(JSON.stringify(events)),
-      totalPages: Math.ceil(eventCounts / limit),
+      totalPages: Math.ceil(eventsCount / limit),
     };
   } catch (error) {
     handleError(error);
   }
-};
+}
 
 export const getEventById = async (id: any) => {
   try {

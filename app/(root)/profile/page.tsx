@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { getEventsByUser } from "@/lib/actions/event.actions";
-// import { getOrdersByUser } from "@/lib/actions/";
+import { getOrdersByUser } from "@/lib/actions/order.actions";
 import { IOrder } from "@/lib/database/model/order.model";
 import { SearchParamProps } from "@/types";
 import Collection from "@/components/shared/Collections";
@@ -16,9 +16,8 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const eventsPage = Number(searchParams?.eventsPage) || 1;
   const organizedEvents = await getEventsByUser({ userId, page: eventsPage });
 
-  //   const orders = await getOrdersByUser({ userId, page: ordersPage });
-
-  //   const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
+  const orders = await getOrdersByUser({ userId, page: ordersPage });
+  const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
 
   return (
     <>
@@ -34,14 +33,14 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
 
       <section className="wrapper my-8">
         <Collection
-          data={[]}
+          data={orderedEvents}
           emptyTitle="No event tickets purchased yet"
           emptyStateSubtext="No worries - plenty of exciting events to explore!"
           collectionType="My_Tickets"
           limit={3}
           page={ordersPage}
           urlParamName="ordersPage"
-          totalPages={1}
+          totalPages={orders?.totalPages}
         />
       </section>
 
